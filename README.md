@@ -51,15 +51,23 @@ README last updated: 5th December 2023
 
 ## Cypress Fundamentals
 
+## 1 Describe blocks
+
 - `describe` blocks
   - your tests in a test file exist in a describe block
   - two args
     - description of what you are testing
     - callback fn for actual tests in the describe
+
+## 2 It Blocks
+
 - `it` blocks
   - single tests in overall test file
   - API for `it()` is the same as for `describe`
     - descriptive string - title of a test - and a callback containing test code
+
+## 3 Commands & Interacting with Elements
+
 - commands & interacting with elements
   - Cypress has various commands to perform testing
   - use commands on `cy` object
@@ -141,3 +149,5 @@ cy.get("button").then(($btn) => {
 - we can see that in order to click the button, we have to use `.wrap()`
 - most of the time you DO NOT have to use `.then()` to interact
 - sometimes you do need to use it, and so it's useful to know
+
+## 4 Getting Elements
