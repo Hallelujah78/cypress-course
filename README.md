@@ -1,34 +1,35 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Testing JavaScript with Cypress
 
-## Getting Started
+Commenced: 5th December 2023
+README last updated: 5th December 2023
 
-First, run the development server:
+- Course available [here](https://www.youtube.com/watch?v=u8vMu7viCm8 "Click to view a course on testing javascript with cypress tutorial on YouTube")
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Why Cypress?
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- Cypress is all-in-one testing framework, assertion library, with mocking and stubbing
+- E2E and component testing in more of a real-world environment
+  - write tests in workflows that the user will actually go through
+- Runs in browser and written in JavaScript
+- good performance & integrated into CI/CD easily
+- native access to DOM and to your app
+  - easy to debug
+  - have access to the app in the test runner - no back and forth to figure out what is going on
+- great developer UX
+  - I agree when comparing it to the hassle of just setting up Jest, RTL, Vite, React, Babel, eslint getting imports to work, eslint, etc, etc
+  - just the amount of time eliminating errors in config files and getting the first test to run!
+- generally not flaky if using best practices
+  - flaky = run tests and all pass
+  - run it again with no changes and some fail
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+---
 
-## Learn More
+## Overview and install
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- already done this
+- clone the repo in the video description
+- install deps and Cypress
+- `npx cypress open`
+- config Cypress
