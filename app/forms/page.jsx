@@ -49,7 +49,7 @@ export default function FormsPage() {
       />
       <Button
         onClick={() => {
-          if (!inputValue.includes(".com")) {
+          if (!inputValue.includes(".com") && inputValue.length) {
             setSubMessage(`Invalid email: ${inputValue}!`);
           } else if (inputValue.length) {
             setSubMessage(`Successfully subbed: ${inputValue}!`);

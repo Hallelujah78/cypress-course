@@ -5,6 +5,8 @@ README last updated: 5th December 2023
 
 - Course available [here](https://www.youtube.com/watch?v=u8vMu7viCm8 "Click to view a course on testing javascript with cypress tutorial on YouTube")
 
+- documentation, examples, references, tutorials, real-world app example for Cypress seem extremely good and should be checked out
+
 ---
 
 ## Why Cypress?
@@ -443,3 +445,125 @@ cy.wait(500);
 ```
 
 - put a wait in before you do anything
+- code so far:
+
+```js
+describe("form tests", () => {
+  it("test subscribe form", () => {
+    cy.visit("/forms");
+    cy.wait(500);
+    cy.contains(/testing forms/i).should("exist");
+    cy.contains(/successfully subbed: gavan@email.com!/i).should("not.exist");
+    cy.get('[data-test="form-input"]')
+      .find("input")
+      .click()
+      .type("gavan@email.com", { delay: 15 });
+
+    cy.getDataTest("subscribe-button").click();
+    cy.contains(/successfully subbed: gavan@email.com!/i).should("exist");
+  });
+});
+```
+
+- and all working perfectly!
+- if we want to get the same input multiple times in a specific test file
+  - can create an alias for it
+- aliases and retryability
+- retryability
+  - Cypress automatically waits without adding async/awaits
+- Explicit Waits
+  - in some cases (data fetching), you may want to wait for something
+  - best way is to `wait on aliases`
+    - I'm thinking this is similar to waiting for a specific element to render which lets you know when the data fetching is finished and the page has rendered?
+    - things that can be aliased (elements, intercepts, requests), can also be waited on
+- example of giving a request an alias and waiting on the request alias from docs:
+
+```js
+describe("User Sign-up and Login", () => {
+  beforeEach(() => {
+    cy.request("POST", "/users").as("signup"); // creating the signup alias
+  });
+
+  it("should allow a visitor to sign-up, login, and logout", () => {
+    cy.visit("/");
+    // ...
+
+    cy.wait("@signup"); // waiting upon the signup alias
+
+    // ...
+  });
+});
+```
+
+- now we use `as()` to give our input an alias
+
+```js
+cy.get('[data-test="form-input"]').find("input").as("subscribe-input");
+```
+
+- and later we use the alias to `get` it
+
+```js
+cy.get("@subscribe-input").type("gavan@email.com", { delay: 15 });
+```
+
+- the unhappy path code:
+
+```js
+//unhappy path 1 - invalid email
+cy.contains(/invalid email: gavan@email.io!/i).should("not.exist");
+cy.get("@subscribe-input").type("gavan@email.io", { delay: 15 });
+cy.getDataTest("subscribe-button").click();
+cy.contains(/invalid email: gavan@email.io!/i).should("exist");
+cy.wait(3000);
+cy.contains(/invalid email: gavan@email.io!/i).should("not.exist");
+```
+
+- again, we are asserting error message doesn't exist, we input badly formed email address, click button, error message exists, wait 3 seconds, error message doesn't exist
+  - all working great!
+- we also test nothing entered into the input
+- full code for our form tests:
+
+```js
+describe("form tests", () => {
+  beforeEach(() => {
+    cy.visit("/forms");
+    cy.contains(/testing forms/i).should("exist");
+    cy.get('[data-test="form-input"]').find("input").as("subscribe-input");
+  });
+  it("test subscribe form", () => {
+    cy.wait(500);
+    // happy path
+
+    cy.contains(/successfully subbed: gavan@email.com!/i).should("not.exist");
+    cy.get("@subscribe-input").type("gavan@email.com", { delay: 15 });
+    cy.getDataTest("subscribe-button").click();
+    cy.contains(/successfully subbed: gavan@email.com!/i).should("exist");
+    cy.wait(3000);
+    cy.contains(/successfully subbed: gavan@email.com!/i).should("not.exist");
+
+    //unhappy path 1 - invalid email
+    cy.contains(/invalid email: gavan@email.io!/i).should("not.exist");
+    cy.get("@subscribe-input").type("gavan@email.io", { delay: 15 });
+    cy.getDataTest("subscribe-button").click();
+    cy.contains(/invalid email: gavan@email.io!/i).should("exist");
+    cy.wait(3000);
+    cy.contains(/invalid email: gavan@email.io!/i).should("not.exist");
+
+    // unhappy path 2 - nothing typed into input
+    cy.contains(/fail!/i).should("not.exist");
+    cy.getDataTest("subscribe-button").click();
+    cy.contains(/fail!/i).should("exist");
+    cy.contains(/fail!/i).should("not.exist");
+  });
+});
+```
+
+## Examples
+
+- multi-page testing
+- intercepts
+- helpful methods
+- grudge list (cf to do list)
+
+## Examples 1 - Multi-Page Testing
