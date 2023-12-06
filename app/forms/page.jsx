@@ -22,7 +22,7 @@ const items = [
   },
   {
     summary: "Step 4) Test success/fail",
-    details: `NOTE: Waiting/Retryability *docs`,
+    details: `NOTE: Waiting/Retriability *docs`,
     id: "4",
   },
   {
@@ -61,6 +61,7 @@ export default function FormsPage() {
             setInputValue("");
           }, 3000);
         }}
+        data-test="subscribe-button"
       >
         Subscribe
       </Button>

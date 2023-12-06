@@ -1,9 +1,8 @@
 describe("form tests", () => {
-  beforeEach(() => {
-    cy.visit("/forms");
-  });
   it("test subscribe form", () => {
+    cy.visit("/forms");
     cy.contains(/testing forms/i);
-    cy.getDataTest("form-input").find("input").should("exist");
+    cy.get('[data-test="form-input"]').find("input").type("name@email.com");
+    // cy.getDataTest("subscribe-button").click();
   });
 });

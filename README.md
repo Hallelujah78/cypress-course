@@ -401,3 +401,22 @@ cy.getDataTest("form-input").find("input");
 ```
 
 - and this works
+- let's test 'happy' path, user gets it right
+
+```js
+cy.getDataTest("form-input").find("input").type("name@email.com");
+```
+
+- use `type` to enter input on the page
+- add a `data-test` to the button and get the button + click
+- note, I am getting some real flakiness at the moment
+
+```js
+Warning: Prop `htmlFor` did not match. Server: ":R1mqqcq:" Client: ":R6rb9j9:"
+```
+
+- and Cypress test runner hanging indefinitely
+  - stopping the dev server and cypress test runner and restarting didn't fix, nor did restarting VSCode.
+  - restarted PC
+    - test ran successfully on first run but with same errors in console
+    - on second run we get the same or a similar error and it hangs indefinitely
