@@ -416,7 +416,30 @@ Warning: Prop `htmlFor` did not match. Server: ":R1mqqcq:" Client: ":R6rb9j9:"
 ```
 
 - and Cypress test runner hanging indefinitely
+- this is actually an issue with `type()`
   - stopping the dev server and cypress test runner and restarting didn't fix, nor did restarting VSCode.
   - restarted PC
     - test ran successfully on first run but with same errors in console
     - on second run we get the same or a similar error and it hangs indefinitely
+    - took me probably 2 hours of fiddling and searching
+- a few things to solve the issue relating to `type()` causing the test runner to hang
+  - clear the history/cache of your actual browser
+  - in the Cypress app, click `Developer Tools>View App Data` and delete the contents of `cy` folder - i.e. delete the production folder and restart Cypress
+    - this is an official troubleshooting recommendation
+  - run your `type()` with a preceding click and change the delay between key strokes:
+
+```js
+cy.get('[data-test="form-input"]')
+  .find("input")
+  .click()
+  .type("gavan@email.com", { delay: 15 });
+```
+
+- this step appears (caution!) to have removed the flakiness completely (I've thought this before over the previous 2 hours):
+
+```js
+cy.visit("/forms");
+cy.wait(500);
+```
+
+- put a wait in before you do anything
