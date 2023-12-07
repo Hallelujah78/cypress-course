@@ -1,7 +1,7 @@
 # Testing JavaScript with Cypress
 
 Commenced: 5th December 2023
-README last updated: 5th December 2023
+README last updated: 7th December 2023
 
 - Course available [here](https://www.youtube.com/watch?v=u8vMu7viCm8 "Click to view a course on testing javascript with cypress tutorial on YouTube")
 
@@ -564,6 +564,88 @@ describe("form tests", () => {
 - multi-page testing
 - intercepts
 - helpful methods
-- grudge list (cf to do list)
+- grudge list (cf. to do list!)
 
 ## Examples 1 - Multi-Page Testing
+
+- you can write tests across pages to better test user workflow
+- you can click on navigation buttons/links or use cy.visit()
+- you can use `cy.location('pathname).should('equal', '/some-path')` to assert correct location
+
+- we have a navbar in our app
+- we need to add `data-test` attributes to these so that we can get and click them
+
+```js
+const navItems = [
+    {
+    label: 'Why Cypress?',
+    path: '/',
+    dataTest: 'nav-why-cypress'
+    },
+    {
+    label: 'Overview',
+    path: '/overview',
+    dataTest: 'nav-overview',
+    },
+    {
+    label: 'Fundamentals',
+    path: '/fundamentals',
+    dataTest: 'nav-fundamentals',
+    }
+    ...]
+```
+
+- pass dataTest to NavItem (we want to add `data-test` to the Link):
+
+```js
+export default function NavBar() {
+  return (
+    <ul className="nav-bar">
+      {navItems.map((item) => (
+        <NavItem
+          dataTest={item.dataTest}
+          key={item.label}
+          label={item.label}
+          path={item.path}
+        />
+      ))}
+    </ul>
+  );
+}
+```
+
+- add `data-test` to Link in NavItem:
+
+```js
+export default function NavItem({ label, path, dataTest }) {
+  return (
+    <Link data-test={dataTest} href={path}>
+      {label}
+    </Link>
+  );
+}
+```
+
+- now we can do this:
+
+```js
+cy.getDataTest("nav-why-cypress").click();
+cy.location("pathname").should("equal", "/");
+```
+
+- can repeat for all of our routes and this, as the tutorial says, is multi-page testing (is that it?)
+
+## Example 2 - Intercepts
+
+- intercepts are one way to work with network requests in Cypress
+- you intercept a network request and return mocked/dummy/fake data for testing purposes
+- on the Examples page in our test app, there's a Post Data button
+- the button is a PostButton component
+- the click handler makes a POST request to localhost:3000/examples
+- we can intercept it and return something for our tests:
+
+```js
+cy.intercept("POST", "http://localhost:3000/examples", {
+  body: { message: "successfully intercepted request" },
+});
+```
