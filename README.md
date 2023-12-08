@@ -649,3 +649,119 @@ cy.intercept("POST", "http://localhost:3000/examples", {
   body: { message: "successfully intercepted request" },
 });
 ```
+
+- if we want to return data instead of a simple message, we use a fixture
+- you can alias an intercept:
+
+```js
+cy.intercept("POST", "/users").as("signup");
+// and then wait
+cy.wait("@signup");
+```
+
+- this means we can hold off executing the rest of a test until the intercept completes
+- fixture example:
+
+```js
+cy.intercept("GET", "/transactions/public*", {
+  fixture: "public-transactions.json",
+}).as("mockedPublicTransactions");
+```
+
+- the fixture appears to be a json file, which is pretty cool in terms of what you can do with this!
+- you can also adjust the headers of the response
+- modify response data
+- inspecting a request, from the docs
+
+```js
+cy.intercept("POST", apiGraphQL, (req) => {
+  const { body } = req;
+
+  if (
+    body.hasOwnProperty("operationName") &&
+    body.operationName === "CreateBankAccount"
+  ) {
+    req.alias = "gqlCreateBankAccountMutation";
+  }
+});
+```
+
+- Cypress adds a fixtures folder for us
+- in fixtures, we can place mocked data files, e.g. json files
+  - Cypress adds an example.json file with mock data in it
+- we can return this example.json from our intercept:
+
+```js
+cy.intercept("POST", "http://localhost:3000/examples", {
+  fixture: "example.json",
+});
+```
+
+- no import needed, Cypress just looks in fixture folder I guess!
+
+## Examples 3 - Helpful Methods
+
+- Cypress [docs](https://learn.cypress.io/advanced-cypress-concepts/important-cypress-methods-you-need-to-know "navigates to 'cypress methods you need to know' page on learn.cypress.io")
+
+- `.its()`
+  - used to get a property off of something
+  - example, make assertion against array:
+
+```js
+cy.wrap(["Wai Yan", "Yu"]).its(1).should("eq", "Yu"); // true
+```
+
+- get object property:
+
+```js
+cy.wrap({ age: 52 }).its("age").should("eq", 52); // true
+```
+
+- get `results` from `@publicTransactions` alias:
+
+```js
+it("first five items belong to contacts in public feed", () => {
+  // ...
+
+  cy.wait("@publicTransactions")
+    .its("response.body.results")
+    .invoke("slice", 0, 5);
+});
+```
+
+- note how we use `.invoke()` to call `slice()` on `response.body.results`
+
+- `.invoke()`
+
+  - invoke func on previously yielded subject
+
+- `.request()`
+  - make a http request
+
+```js
+cy.request("POST", "http://localhost:8888/users/admin", { name: "Jane" }).then(
+  (response) => {
+    // response.body is automatically serialized into JSON
+    expect(response.body).to.have.property("name", "Jane"); // true
+  }
+);
+```
+
+- `.within()`
+  - scopes subsequent Cypress commands to within an element
+
+```js
+it("ensures the section lesson exists", () => {
+  cy.getBySel("section-steps").within(() => {
+    cy.getBySel("lesson-complete-0").should("exist");
+  });
+});
+```
+
+- `getBySel` is getting by data-test selector (similar to our `getDataTest`)
+
+## Example 4 - Grudge List
+
+- we can add a grudge
+- we can remove a grudge
+- we can clear all grudges
