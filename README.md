@@ -360,7 +360,7 @@ it("renders a h1 with text 'testing fundamentals", () => {
 
 - lots we can do with forms, get, click, enter input, test validation, see if submission was successful
 
-### Get Form
+## Get Form
 
 - create `forms.cy.js`
 - so far
@@ -774,5 +774,112 @@ it("ensures the section lesson exists", () => {
 // list is empty when there are no grudges
 cy.getDataTest("grudge-list").within(() => {
   cy.get("li").should("have.length", 0);
+});
+```
+
+- complete grudge list tests
+  - we test as much of the logic as possible (by as much as possible, I mean all of it):
+
+```js
+it.only("grudge list test", () => {
+  const grudgeOne = "a grudge";
+  const grudgeTwo = "second one";
+
+  cy.wait(500);
+  cy.getDataTest("grudge-list-container").as("grudgeContainer");
+  cy.getDataTest("add-grudge").as("addGrudgeButton");
+  cy.getDataTest("clear-grudges").should("not.exist");
+  cy.getDataTest("grudge-list-title").as("grudgeListTitle");
+
+  // check title of grudge container when there are no grudges
+  cy.contains(/add some grudges/i).should("exist");
+  cy.get("@grudgeListTitle").should("not.have.text", "Grudges");
+
+  // list is empty when there are no grudges
+  cy.getDataTest("grudge-list").within(() => {
+    cy.get("li").should("have.length", 0);
+  });
+
+  // enter a grudge
+  cy.get("@grudgeContainer").find("input").type(grudgeOne);
+  cy.get("@addGrudgeButton").click();
+  cy.getDataTest("grudge-list").within(() => {
+    cy.get("li").should("have.length", 1);
+  });
+  cy.contains(/add some grudges/i).should("not.exist");
+  cy.get("@grudgeListTitle").should("have.text", "Grudges");
+
+  // enter another grudge
+  cy.get("@grudgeContainer").find("input").type(grudgeTwo);
+  cy.get("@addGrudgeButton").click();
+  cy.getDataTest("grudge-list").within(() => {
+    cy.get("li").should("have.length", 2);
+    cy.get("li").its(1).should("contains.text", "second one");
+  });
+
+  // delete a grudge
+  cy.get("@grudgeContainer").find("li").its(0).find("button").click();
+  cy.getDataTest("grudge-list").within(() => {
+    cy.get("li").should("have.length", 1);
+  });
+
+  // clear all grudges
+  cy.getDataTest("clear-grudges").click();
+  cy.getDataTest("grudge-list").within(() => {
+    cy.get("li").should("have.length", 0);
+  });
+});
+```
+
+## Component Testing
+
+- restart Cypress and choose component testing
+- select the framework (react, next, angular etc)
+- click continue
+- start testing in chrome
+- click 'Create New Spec'
+- we'll test the Accordion component
+  - rename the new spec to Accordion.cy.jsx
+  - run the spec
+- back in VSCode, we have the Cypress folder and in there we have a `component` folder
+- in there is our `Accordion.cy.jsx` file that we open up
+  - in Cypress, component tests very similar to E2E tests
+- our file contains:
+
+```js
+describe("Accordion.cy.jsx", () => {
+  it("playground", () => {
+    // cy.mount()
+  });
+});
+```
+
+## Component Testing 1 - Overview
+
+- can test individual components of app with component tests
+
+## Component Testing 2 - Component vs E2E
+
+- component testing and E2E testing use the same Cypress test runner, commands and API
+- main difference is Cypress builds components using dev server instead of rendering within complete website
+  - faster tests
+  - fewer dependencies on infrastructure than E2E tests covering same code paths
+- an example of where you might prefer a component test over a E2E test is new account creation
+
+## Component Testing 3 - Additional Configuration
+
+- you may need to add additional configuration to support component tests
+  in Next.js you need to add something like:
+
+```js
+const { defineConfig } = require("cypress");
+
+module.exports = defineConfig({
+  component: {
+    devServer: {
+      framework: "next",
+      bundler: "webpack",
+    },
+  },
 });
 ```
