@@ -765,3 +765,14 @@ it("ensures the section lesson exists", () => {
 - we can add a grudge
 - we can remove a grudge
 - we can clear all grudges
+- here we write tests for our grudge list
+- i had a go at writing the tests on my own
+  - I was placing a data-test on a container and then using `.find()`
+  - a better approach that the tutor uses using `.within()`
+
+```js
+// list is empty when there are no grudges
+cy.getDataTest("grudge-list").within(() => {
+  cy.get("li").should("have.length", 0);
+});
+```
