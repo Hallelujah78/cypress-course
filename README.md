@@ -883,3 +883,63 @@ module.exports = defineConfig({
   },
 });
 ```
+
+- in our case, Cypress has added this into our `cypress.config.js` for us
+
+## Component Testing 4 - Example
+
+- you can mount a component using `cy.mount()
+- then interact & make assertions as you would in E2E testing
+- let's test Accordion
+- since the ItemsAccordion expects an items prop we have to pass something in:
+
+```js
+import { default as ItemsAccordion } from "@/app/components/Accordion";
+// expects items {id, summary, details}
+
+const items = [
+  {
+    summary: "Reason 1",
+    details:
+      "An all-in-one testing framework, assertion library, with mocking and stubbing",
+    id: "1",
+  },
+  {
+    summary: "Reason 2",
+    details: "Focus on E2E and Component Testing -- real world testing",
+    id: "2",
+  },
+  {
+    summary: "Reason 3",
+    details: "Runs in the browser and wrote in JavaScript",
+    id: "3",
+  },
+];
+
+describe("Accordion.cy.jsx", () => {
+  it("playground", () => {
+    cy.mount(<ItemsAccordion items={items} />);
+  });
+});
+```
+
+- we just copy and paste the `reasonsCypressIsGreat` array from app>page.jsx
+- our ItemsAccordion successfully renders
+- now we can test
+- we want to assert we have 3 items
+  - give the div wrapping our Accordion items a `data-test` of `accordion-wrapper`
+- get the wrapper and get the items inside
+
+```js
+cy.getDataTest("accordion-wrapper").within(() => {
+  cy.get('[data-test^="accordion-item"]').should("have.length", 3);
+});
+```
+
+- note, `data-test^=`, `^=` means `that starts with`, which is handy
+- next test
+  - get the first accordion item
+  - assert the text is not visible
+  - click it
+  - assert its text is visible
+  - close it by clicking and assert the text is no longer visible
