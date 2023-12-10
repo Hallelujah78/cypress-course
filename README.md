@@ -1,7 +1,7 @@
 # Testing JavaScript with Cypress
 
 Commenced: 5th December 2023
-README last updated: 7th December 2023
+README last updated: 10th December 2023
 
 - Course available [here](https://www.youtube.com/watch?v=u8vMu7viCm8 "Click to view a course on testing javascript with cypress tutorial on YouTube")
 
@@ -943,3 +943,101 @@ cy.getDataTest("accordion-wrapper").within(() => {
   - click it
   - assert its text is visible
   - close it by clicking and assert the text is no longer visible
+- our completed component test code:
+
+```js
+import { default as ItemsAccordion } from "@/app/components/Accordion";
+// expects items {id, summary, details}
+
+const items = [
+  {
+    summary: "Reason 1",
+    details:
+      "An all-in-one testing framework, assertion library, with mocking and stubbing",
+    id: "1",
+  },
+  {
+    summary: "Reason 2",
+    details: "Focus on E2E and Component Testing -- real world testing",
+    id: "2",
+  },
+  {
+    summary: "Reason 3",
+    details: "Runs in the browser and wrote in JavaScript",
+    id: "3",
+  },
+];
+
+describe("Accordion.cy.jsx", () => {
+  it("items accordion", () => {
+    cy.mount(<ItemsAccordion items={items} />);
+    cy.getDataTest("accordion-wrapper").within(() => {
+      cy.get('[data-test^="accordion-item"]').should("have.length", 3);
+    });
+
+    //
+    cy.contains("An all-in-one testing framework,").should("not.be.visible");
+
+    cy.getDataTest("accordion-item-1").within(() => {
+      cy.get('[role="button"]').click();
+    });
+
+    cy.contains("An all-in-one testing framework,").should("be.visible");
+    cy.getDataTest("accordion-item-1").within(() => {
+      cy.get('[role="button"]').click();
+    });
+    cy.contains("An all-in-one testing framework,").should("not.be.visible");
+  });
+});
+```
+
+- note that `cy.get('[role="button"]')` is the syntax for getting elements by attribute
+  - the attribute here is `role`
+  - the attribute value is `button`
+
+## Best Practices Recommended by Cypress
+
+## Best Practice 1 - Test Unhappy Paths
+
+- test with the idea that the user might be malicious or just trying to do stuff in an uncommon way, inputting incorrect data etc
+
+## Best Practice 2 - Use Stable Selectors
+
+- Use `data-` attributes to provide context to selectors to isolate them from CSS or JS changes that may occur.
+- don't use CSS attributes like id, class, tag
+- don't target elements that may change textContent
+- be specific with selectors
+  - `cy.get('button')` is bad
+- don't couple to styles
+
+## Best Practice 3 - Don't Assign Return Values
+
+- Cypress is asynchronous
+
+## Best Practice 4 - Don't Test External Sites
+
+- only test stuff you control
+- avoid visiting or requiring 3rd party server
+- you might use `cy.request()` to talk to 3rd party servers via APIs
+  - if possible, cache results via `cy.session()` to avoid repeated fetches
+
+## Best Practice 5 - Keep Tests Independent
+
+- A given test should not rely on the results of other tests
+
+## Best Practice 6 - Don't Worry About Writing Tiny Tests
+
+- these are non-performant and excessive (unit tests)
+- Cypress resets states between tests and it's resource intensive
+  - small tests hurt performance
+  - you'll know what assertions are failing in longer E2E tests
+
+## Best Practice 7 - Clean Up State Before Tests Run
+
+- don't use `after` or `afterEach` to clean up state after the test runs
+- you want to be able to look at the finished state in the test runner to decide what to test next etc
+- if something fails, the after/afterEach won't run
+
+## Best Practice 8 - Avoid Using Arbitrary `cy.wait()`
+
+- instead, use route aliases or assertions to guard Cypress from proceeding until an explicit condition is met
