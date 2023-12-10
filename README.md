@@ -23,8 +23,7 @@ README last updated: 10th December 2023
   - I agree when comparing it to the hassle of just setting up Jest, RTL, Vite, React, Babel, eslint getting imports to work, eslint, etc, etc
   - just the amount of time eliminating errors in config files and getting the first test to run!
 - generally not flaky if using best practices
-  - flaky = run tests and all pass
-  - run it again with no changes and some fail
+  - flaky = run tests and all pass, then run it again with no changes and some fail
 
 ---
 
